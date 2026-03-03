@@ -13,61 +13,118 @@ HTML = '''
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MITS Realtime Attendance Tracker</title>
 <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body {
-        height: 100vh;
-        background: linear-gradient(135deg, #4e54c8, #8f94fb);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: background 0.5s;
-    }
-    .login-card {
-        background: #fff;
-        border-radius: 20px;
-        padding: 40px 50px;
-        width: 400px;
-        max-width: 90%;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-        text-align: center;
-        transition: opacity 0.5s;
-    }
-    .login-card h1 { font-size: 1.8em; margin-bottom: 30px; color: #4e54c8; font-weight: bold; letter-spacing: 1px; }
-    .login-card input[type="text"], .login-card input[type="password"] {
-        width: 100%; padding: 15px 20px; margin: 10px 0 20px 0; border: none;
-        border-radius: 10px; background: #f0f0f5; font-size: 1em; transition: 0.3s;
-    }
-    .login-card input:focus { outline: none; background: #e0e0ff; box-shadow: 0 0 5px #4e54c8; }
-    .login-card button {
-        width: 100%; padding: 15px; background: linear-gradient(90deg, #4e54c8, #8f94fb);
-        color: #fff; font-size: 1em; font-weight: bold; border: none; border-radius: 10px;
-        cursor: pointer; transition: 0.3s;
-    }
-    .login-card button:hover { background: linear-gradient(90deg, #8f94fb, #4e54c8); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
-    pre { font-size: 1.1em; color: #333; white-space: pre-wrap; word-wrap: break-word; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #4e54c8, #8f94fb);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.5s;
+}
+.login-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 40px 50px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    text-align: center;
+    transition: opacity 0.5s;
+}
+.login-card h1 {
+    font-size: 1.8em;
+    margin-bottom: 30px;
+    color: #4e54c8;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+.login-card input[type="text"], .login-card input[type="password"] {
+    width: 100%;
+    padding: 15px 20px;
+    margin: 10px 0 20px 0;
+    border: none;
+    border-radius: 10px;
+    background: #f0f0f5;
+    font-size: 1em;
+    transition: 0.3s;
+}
+.login-card input:focus {
+    outline: none;
+    background: #e0e0ff;
+    box-shadow: 0 0 5px #4e54c8;
+}
+.login-card button {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(90deg, #4e54c8, #8f94fb);
+    color: #fff;
+    font-size: 1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.login-card button:hover {
+    background: linear-gradient(90deg, #8f94fb, #4e54c8);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+#report-container {
+    display: none;
+    max-width: 90%;
+    padding: 20px;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-radius: 15px;
+    overflow-x: auto;
+}
+#desktop-warning {
+    display: none;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #e74c3c;
+}
+pre {
+    font-size: 1.05em;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: #333;
+}
 </style>
 </head>
 <body>
-    <div class="login-card" id="loginCard">
-        <h1>MITS REALTIME ATTENDANCE TRACKER</h1>
-        <form method="post" onsubmit="hideForm()">
-            <input type="text" name="roll" placeholder="Enter Roll No" required><br>
-            <input type="password" name="password" placeholder="Enter Password" required><br>
-            <button type="submit">Get Report</button>
-        </form>
-        <p>Secure & Realtime Data</p>
-    </div>
+<div class="login-card" id="loginCard">
+    <h1>MITS REALTIME ATTENDANCE TRACKER</h1>
+    <form id="loginForm">
+        <input type="text" name="roll" placeholder="Enter Roll No" required><br>
+        <input type="password" name="password" placeholder="Enter Password" required><br>
+        <button type="submit">Get Report</button>
+    </form>
+    <p>Secure & Realtime Data</p>
+</div>
+
+<div id="report-container">
+    <div id="desktop-warning">⚠️ Best viewed in desktop mode ⚠️</div>
     <pre id="report">{{ report }}</pre>
+</div>
 
 <script>
-function hideForm() {
-    // Remove the card after form submission
+// Handle form submission
+document.getElementById('loginForm').onsubmit = function(e){
+    e.preventDefault(); // prevent normal POST to keep in page
+    // Get report content from Flask rendered variable
+    var reportContent = `{{ report }}`;
+
+    // Hide login card
     var card = document.getElementById('loginCard');
-    if(card) {
-        card.style.opacity = 0;
-        setTimeout(()=>{ card.style.display='none'; }, 500);
-    }
-    // Change background to white
+    card.style.opacity = 0;
+    setTimeout(()=>{ card.style.display='none'; }, 500);
+
+    // Show report container
+    var reportContainer = document.getElementById('report-container');
+    reportContainer.style.display = 'block';
     document.body.style.background = '#ffffff';
 }
 </script>
@@ -225,5 +282,6 @@ def home():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000)
+
 
 
