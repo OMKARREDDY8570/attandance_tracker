@@ -6,13 +6,94 @@ import requests
 app = Flask(__name__)
 
 HTML = '''
-<h2>Attendance Portal</h2>
-<form method="post">
-  Roll No: <input type="text" name="roll"><br>
-  Password: <input type="password" name="password"><br>
-  <input type="submit" value="Get Report">
-</form>
-<pre>{{ report }}</pre>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MITS Realtime Attendance Tracker</title>
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+        height: 100vh;
+        background: linear-gradient(135deg, #4e54c8, #8f94fb);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .login-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 40px 50px;
+        width: 400px;
+        max-width: 90%;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        text-align: center;
+    }
+    .login-card h1 {
+        font-size: 1.8em;
+        margin-bottom: 30px;
+        color: #4e54c8;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+    .login-card input[type="text"],
+    .login-card input[type="password"] {
+        width: 100%;
+        padding: 15px 20px;
+        margin: 10px 0 20px 0;
+        border: none;
+        border-radius: 10px;
+        background: #f0f0f5;
+        font-size: 1em;
+        transition: 0.3s;
+    }
+    .login-card input:focus {
+        outline: none;
+        background: #e0e0ff;
+        box-shadow: 0 0 5px #4e54c8;
+    }
+    .login-card button {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(90deg, #4e54c8, #8f94fb);
+        color: #fff;
+        font-size: 1em;
+        font-weight: bold;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .login-card button:hover {
+        background: linear-gradient(90deg, #8f94fb, #4e54c8);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    }
+    .login-card p {
+        margin-top: 20px;
+        font-size: 0.9em;
+        color: #555;
+    }
+</style>
+</head>
+<body>
+    <div class="login-card">
+        <h1>MITS REALTIME ATTENDANCE TRACKER</h1>
+        <form method="post">
+            <input type="text" name="roll" placeholder="Enter Roll No" required><br>
+            <input type="password" name="password" placeholder="Enter Password" required><br>
+            <button type="submit">Get Report</button>
+        </form>
+        <pre>{{ report }}</pre>
+        <p>Secure & Realtime Data</p>
+    </div>
+</body>
+</html>
 '''
 
 def attandance(username,password):
@@ -165,3 +246,4 @@ def home():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000)
+
