@@ -18,6 +18,7 @@ body {
     min-height: 100vh;
     background: linear-gradient(135deg, #4e54c8, #8f94fb);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     transition: background 0.5s;
@@ -47,7 +48,6 @@ body {
     border-radius: 10px;
     background: #f0f0f5;
     font-size: 1em;
-    transition: 0.3s;
 }
 .login-card input:focus {
     outline: none;
@@ -64,23 +64,21 @@ body {
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    transition: 0.3s;
 }
 .login-card button:hover {
     background: linear-gradient(90deg, #8f94fb, #4e54c8);
     box-shadow: 0 5px 20px rgba(0,0,0,0.3);
 }
 #report-container {
-    display: none;
     max-width: 90%;
     padding: 20px;
     background: #ffffff;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     border-radius: 15px;
     overflow-x: auto;
+    margin-top: 20px;
 }
 #desktop-warning {
-    display: none;
     text-align: center;
     margin-bottom: 20px;
     font-weight: bold;
@@ -97,7 +95,7 @@ pre {
 <body>
 <div class="login-card" id="loginCard">
     <h1>MITS REALTIME ATTENDANCE TRACKER</h1>
-    <form id="loginForm">
+    <form method="post" onsubmit="hideLogin()">
         <input type="text" name="roll" placeholder="Enter Roll No" required><br>
         <input type="password" name="password" placeholder="Enter Password" required><br>
         <button type="submit">Get Report</button>
@@ -107,24 +105,16 @@ pre {
 
 <div id="report-container">
     <div id="desktop-warning">⚠️ Best viewed in desktop mode ⚠️</div>
-    <pre id="report">{{ report }}</pre>
+    <pre>{{ report }}</pre>
 </div>
 
 <script>
-// Handle form submission
-document.getElementById('loginForm').onsubmit = function(e){
-    e.preventDefault(); // prevent normal POST to keep in page
-    // Get report content from Flask rendered variable
-    var reportContent = `{{ report }}`;
-
-    // Hide login card
+// Only hide login box on submit for better clarity
+function hideLogin() {
     var card = document.getElementById('loginCard');
-    card.style.opacity = 0;
-    setTimeout(()=>{ card.style.display='none'; }, 500);
-
-    // Show report container
-    var reportContainer = document.getElementById('report-container');
-    reportContainer.style.display = 'block';
+    if(card) {
+        card.style.display = 'none';
+    }
     document.body.style.background = '#ffffff';
 }
 </script>
@@ -282,6 +272,7 @@ def home():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000)
+
 
 
 
